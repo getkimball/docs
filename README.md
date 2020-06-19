@@ -1,70 +1,49 @@
-This repository provides installation resources for the Get Kimball applications
+# Get Kimball Documentation
 
-# Application Installation
+The Kimball application is designed to run in your Kubernetes cluster to provide a feature flag API and analytics for your applications
 
-Applications will be installed to your Kubernetes cluster.
+## Getting Started with the Application
 
-Prerequisites:
+* [Application installation](/install.md)
+* Integrating into your applications
+* Creating feature flags
 
-* Kimball-provided credentials for retrieving Kimball Docker images
-* Kimball-provided configuration
-    * Version
-    * Sentry DSN
-* Your own Docker image repository for private storage of these images
-* One or more Kubernetes clusters in which to install the applications
-* [Helm](https://helm.sh/)
+## Feature Flag Model
 
-## Installation Process
+Kimball Feature flags have a control specification but are presented to applications as boolean values.
 
-Installation consists of
+Feature flags default to `false` and are made `true` by specifying conditions for when that will happen.
 
-* Downloading the Kimball app Docker image and uploading to your repository
-* Installing the Kimball API Helm chart.
+### Feature Flag Specification Types
 
-Applications can then be updated to point to the Daemonset for the Kimball API
+* [Boolean](#boolean-flags) - A simple `true` or `false type.
+* [Rollout](#rollout-flags) - An increasing chance of `true` over a period of time
+* [User Conditions](#user-flags) - A user object sent when requesting features is evaluated on various conditions
 
-### Steps
 
-* Docker login with your credentials
+#### Boolean Flags
 
-```
-docker login --username [USERNAME] --password-stdin quay.io
-```
+Boolean flags are the simplest way to set a `true`/`false` condition for a feature flag.
 
-* Download the image and push to your own repository
+#### Rollout Flags
 
-```
-KIMBALL_VERSION=[PROVIDED BY KIMBALL]
-SENTRY_DSN=[PROVIDED BY KIMBALL]
+Rollout flags have a start and end time. The start time defaults to the current time if not specified.
 
-LOCAL_REPOSITORY=[YOUR DOCKER REPOSITORY]
-KIMBALL_IMAGE=quay.io/getkimball/api:${KIMBALL_VERSION}
-LOCAL_IMAGE=${LOCAL_REPOSITORY}:${KIMBALL_VERSION}
+Starting at 0%, the chance a rollout will evaluate to `true` increases linearly over the rollout period.
 
-docker pull quay.io/getkimball/api:${KIMBALL_VERSION}
-docker tag ${KIMBALL_IMAGE} ${LOCAL_IMAGE}
-docker push ${LOCAL_IMAGE}
-```
+After the rollout end time the flag will always evaluate to `true`.
 
-* Install Kimball API from the Helm chart
+#### User Flags
 
-```
-SERVICE_TYPE=ClusterIP
+User flags rely on an input object that is matched to the specification. This can be used to enable features for particular users or groups of users.
 
-helm repo add getkimball https://getkimball.github.io/charts/stable
-helm upgrade kimball-api getkimball/kimball-api --install \
-  --namespace getkimball \
-  --create-namespace \
-  --wait \
-  --timeout 5m \
-  --set image.repository="${LOCAL_REPOSITORY}" \
-  --set image.tag=${KIMBALL_VERSION} \
-  --set service.type=${SERVICE_TYPE} \
-  --set kimball.sentry_dsn=${SENTRY_DSN}
-```
 
-## Post installation
+### Feature Flag Evaluation
 
-The Helm installation notes will contain information for how to reach your installation.
+The conditions for feature flags are evaluated from most-specific to least-specific. This leads to an evaluation order of
 
-Applications should be configured to make requests to the node-local daemonset.
+* User conditions
+* Rollout
+* Binary
+
+The evaluation "wants" a flag to be `true`. If any condition is met a `true` will be returned.
