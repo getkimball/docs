@@ -13,6 +13,7 @@ Prerequisites:
 * Your own Docker image repository for private storage of these images
 * One or more Kubernetes clusters in which to install the applications
 * [Helm](https://helm.sh/)
+* An S3 Bucket writable from an AWS-instance metadata credential set
 
 ## Installation Process
 
@@ -60,7 +61,8 @@ helm upgrade kimball-api getkimball/kimball-api --install \
   --set image.repository="${LOCAL_REPOSITORY}" \
   --set image.tag=${KIMBALL_VERSION} \
   --set service.type=${SERVICE_TYPE} \
-  --set kimball.sentry_dsn=${SENTRY_DSN}
+  --set kimball.sentry_dsn=${SENTRY_DSN} \
+  --set kimball.s3_bucket=${S3_BUCKET}
 ```
 
 ## Post installation

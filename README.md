@@ -23,7 +23,7 @@ Feature flags default to `false` and are made `true` by specifying conditions fo
 
 #### Boolean Flags
 
-Boolean flags are the simplest way to set a `true`/`false` condition for a feature flag.
+Boolean flags are the simplest way to set a `true`/`false` condition for a feature flag. Setting this to `true` will mean the flag is always true, regardless of the other settings.
 
 #### Rollout Flags
 
