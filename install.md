@@ -70,3 +70,25 @@ helm upgrade kimball-api getkimball/kimball-api --install \
 The Helm installation notes will contain information for how to reach your installation.
 
 Applications should be configured to make requests to the node-local daemonset.
+
+
+
+## Helpful commands
+
+### Install our Docker Quay credentials into Kubernetes
+
+(Not recommended)
+
+```
+kubectl create secret docker-registry getkimball-quay \
+    --docker-server=quay.io \
+    --docker-username=... \
+    --docker-password=... \
+    --docker-email=...
+```
+
+Then include
+
+```
+  --set imagePullSecrets=getkimball-quay
+```
