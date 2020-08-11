@@ -7,6 +7,7 @@ The Kimball application is designed to run in your Kubernetes cluster to provide
 * [Application installation](/install.md)
 * Integrating into your applications
 * Creating feature flags
+* [Analytics](/analytics.md)
 
 ## Feature Flag Model
 
