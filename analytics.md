@@ -5,6 +5,8 @@ of CPU/memory, without risking details about individual users.
 
 *note: See your local installation `/api-docs/index.html` for your particular API specification as it may differ from what is documented here.*
 
+*POST requests must have the content-type of `application/json`*
+
 ## Definitions
 
 ID/User ID - The "high cardinality" ID to track for an event.
@@ -30,6 +32,20 @@ Individual analytic events can be sent to `/v0/analytics` with `event_name` and 
 }
 ```
 
+### Sending multiple analytic events
+
+Multiple analytic events can be sent to `/v0/analytics` with `event_name` and `user_id` properties in the POST request body.
+
+```
+{
+  "events": [
+    {"event_name": "string", "user_id": "string"},
+    {"event_name": "string", "user_id": "string"}
+}
+```
+
+Events can have multiple unique `event_name` and `user_id`s in the same request.
+
 ## Goals
 
 Goals events are created with the API that will collect other events from that user when the user completes a goal event. This allows [funnel analysis](https://en.wikipedia.org/wiki/Funnel_analysis) of your application by tracking the user events leading up the goal.
@@ -42,6 +58,20 @@ POST a `goal_name` to `/v0/goals` to create the goal
 ```
 {
   "goal_name": "string"
+}
+```
+
+### Creating a goal when submitting an event
+
+Events can be submitted with a flag to ensure an event is marked as a goal. This removes the need to create goals before submitting infrequent events. The `ensure_goal` option is used for this. This will work when submitting single or multiple events. A `false` value will not disable the goal status for an event.
+
+Example event:
+
+```
+{
+  "event_name": "string",
+  "user_id": "string",
+  "ensure_goal": true
 }
 ```
 
