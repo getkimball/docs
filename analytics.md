@@ -50,6 +50,26 @@ Events can have multiple unique `event_name` and `user_id`s in the same request.
 
 Goals events are created with the API that will collect other events from that user when the user completes a goal event. This allows [funnel analysis](https://en.wikipedia.org/wiki/Funnel_analysis) of your application by tracking the user events leading up the goal.
 
+The analytics for a goal event will include additional information beyond what a non-goal event includes:
+
+* `event_counts` - This is a collection of the unique combinations of user events seen before the user completed the goal.
+
+If a user `U` completes events `A`, `B`, `C`, and then goal `G`, `G` will the event counts:
+
+`[A, B, C]` - 1
+
+This is mean to answer questions such as "how many features do users interact with before buying"
+
+* `single_event_counts` - This is a collection of each of the events users have completed before the goal.
+
+If a user `U` completes events `A`, `B`, `C`, and then goal `G`, `G` will the single event counts:
+
+`A` - 1
+`B` - 1
+`C` - 1
+
+This is meant to answer questions such as "how many people who signed up have see a particular landing page".
+
 
 ### Create a goal
 
@@ -81,9 +101,13 @@ Analytic data can be retrieved via GET `/v0/analytics` which will return a list 
 
 * `name` - The event that was seen
 * `count` -  The number of unique user IDs for this event
-* `event_counts` - Data will only be included if this is a goal event. A list of:
+* `event_counts` - Data will only be included if this is a goal event. A list JSON objects with properties:
     * `events` - A list of events a user completed before triggering this goal
     * `count` - The number of unique user IDs with this combination of events
+* `single_event_counts` - Data will only be included if this is a goal event. A list JSON objects with properties:
+    * `event` - The name of the event a user has completed
+    * `count` - The number of unique user IDs with this event
+
 
 ### Example
 
