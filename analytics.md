@@ -54,7 +54,7 @@ The analytics for a goal event will include additional information beyond what a
 
 * `event_counts` - This is a collection of the unique combinations of user events seen before the user completed the goal.
 
-If a user `U` completes events `A`, `B`, `C`, and then goal `G`, `G` will the event counts:
+If a user `U` completes events `A`, `B`, `C`, and then goal `G`, `G` will have the event counts:
 
 `[A, B, C]` - 1
 
@@ -62,7 +62,7 @@ This is mean to answer questions such as "how many features do users interact wi
 
 * `single_event_counts` - This is a collection of each of the events users have completed before the goal.
 
-If a user `U` completes events `A`, `B`, `C`, and then goal `G`, `G` will the single event counts:
+If a user `U` completes events `A`, `B`, `C`, and then goal `G`, `G` will have the single event counts:
 
 `A` - 1
 `B` - 1
