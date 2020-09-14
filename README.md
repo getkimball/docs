@@ -6,45 +6,48 @@ The Kimball application is designed to run in your Kubernetes cluster to provide
 
 * [Application installation](/install.md)
 * Integrating into your applications
-* Creating feature flags
+* Creating [feature flags](/feature-flags.md)
 * [Analytics](/analytics.md)
 
-## Feature Flag Model
+## Architecture
 
-Kimball Feature flags have a control specification but are presented to applications as boolean values.
+The Kimball application contains two main components, the Core API, and Relays.
 
-Feature flags default to `false` and are made `true` by specifying conditions for when that will happen.
+![Architecture Diagram](/img/architecture-overview.png)
 
-### Feature Flag Specification Types
+### Core API
 
-* [Boolean](#boolean-flags) - A simple `true` or `false type.
-* [Rollout](#rollout-flags) - An increasing chance of `true` over a period of time
-* [User Conditions](#user-flags) - A user object sent when requesting features is evaluated on various conditions
+The Core API contains the synchronization, storage, and UI serving logic. When deployed in Kubernetes this run with a [Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/).
 
+API calls are synchronous and blocking until operations complete.
 
-#### Boolean Flags
+#### HTTP API
 
-Boolean flags are the simplest way to set a `true`/`false` condition for a feature flag. Setting this to `true` will mean the flag is always true, regardless of the other settings.
+The HTTP API is used for setting/retrieving features and analytic data. It is defined with an [OpenAPI v3](https://swagger.io/) specification available via your locally installed instance at `/api-docs/index.html`
 
-#### Rollout Flags
+#### Storage
 
-Rollout flags have a start and end time. The start time defaults to the current time if not specified.
+The Core API is responsible for managing storage of feature flag and analytic data.
 
-Starting at 0%, the chance a rollout will evaluate to `true` increases linearly over the rollout period.
+Feature flags are stored as a [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) in the cluster. The ConfigMap is loaded by Relays to provide per-Node caching of feature flag data.
 
-After the rollout end time the flag will always evaluate to `true`.
+Analytic data uses a pluggable storage configuration. Currently supported options:
 
-#### User Flags
+* [Amazon S3](https://aws.amazon.com/s3/) and compatible APIs
+* [Google Cloud Storage](https://cloud.google.com/storage/)
+* Local file storage
 
-User flags rely on an input object that is matched to the specification. This can be used to enable features for particular users or groups of users.
+#### User Interface
 
+A basic UI is included for managing feature flags and viewing analytics. It is available via HTTP at the root path `/`.
 
-### Feature Flag Evaluation
+### Relays
 
-The conditions for feature flags are evaluated from most-specific to least-specific. This leads to an evaluation order of
+The Relays contain a cache of feature flag configuration and local API intended to reduce latency to the Core API.  When deployed in Kubernetes this is run as a [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/) to provide a per-node deployed API/cache.
 
-* User conditions
-* Rollout
-* Binary
+Relays are not required and are most helpful when using feature flags or when sending analytic events directly from your applications. They can be disabled in the [Helm chart](https://github.com/getkimball/charts/API) when deploying to Kubernetes.
 
-The evaluation "wants" a flag to be `true`. If any condition is met a `true` will be returned.
+API Calls are synchronous but will complete tasks asynchronously where possible.
+
+* Retrieving features flags will be synchronously retrieved from the local cache
+* Storing analytic data will be forwarded from the Relay to the Core API asynchronously
