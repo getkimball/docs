@@ -13,6 +13,8 @@ The Kimball application is designed to run in your Kubernetes cluster to provide
 
 The Kimball application contains two main components, the Core API, and Relays.
 
+![Architecture Diagram](/img/architecture-overview.png)
+
 ### Core API
 
 The Core API contains the synchronization, storage, and UI serving logic. When deployed in Kubernetes this run with a [Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/).
