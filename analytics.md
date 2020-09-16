@@ -129,3 +129,55 @@ When a purchase is completed the events a user has completed will be stored with
 * [ `Sign up`, `Login`, `Searched for a product`] - X occurrences
 * [ `Sign up`, `Login`, `Browsed for a product` ] - Y occurrences
 * [ `Direct link to a product` ] - Z occurrences
+
+
+## Advanced Configuration
+
+Advanced configuration should be done in consultation with a Kimball engineer as some configuration combinations may cause faults when running the application.
+
+### Counter initialization
+
+Advanced configuration can be used to control the initialization arguments for the internal counters. This can be used when higher or lower precision is needed from the counters to support goals such as:
+
+* Large numbers of unique users per counter, with high precision
+* Large numbers of unique events with predictable memory characteristics
+* Small numbers of unique users in low memory situations
+
+The configuration takes the form of
+
+```
+[{features, [
+    {counters, #{
+        init => [
+            #{pattern => PATTERN,
+              type => TYPE,
+              size => SIZE,
+              error_probability => ERROR_PROBABILITY}
+        ]
+    }}
+]}].
+```
+
+The list `init` contains maps with the keys/options (all options are required):
+
+* `pattern` - A regular expression matching the name of an event/counter. The items in `init` are evaluated sequentially and the first matching pattern will be the arguments for the counter
+* `type` - The general type of counter to be used. Currently supported:
+    * `bloom_scalable` - A scalable
+    * `bloom_fixed_size` - A fixed size bloom filter, best used when the number of users is limited and a known number. Typically used when tens or hundreds of users are tracked and memory is a concern
+* `size` - The fixed or initial size for the bloom filter in number distinct users.
+* ` error_probability` - A desired error probability that 2 users may not be distinguishable. This probability is used in conjunction with `size` and certain combinations may be invalid. This is typically expressed as `0.1`, `0.01`, `0.001` and so on.
+
+An example counter initialization configuration:
+
+```
+[{features, [
+    {counters, #{
+        init => [
+            #{pattern => ".*",
+              type => bloom_scalable,
+              size => 10000,
+              error_probability => 0.01}
+        ]
+    }}
+]}].
+```
