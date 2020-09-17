@@ -72,6 +72,28 @@ The Helm installation notes will contain information for how to reach your insta
 Applications should be configured to make requests to the node-local daemonset.
 
 
+## Helpful configuration options for the Helm chart
+
+* Omitting `kimball.s3_bucket` or other storage options will disable analytics persistence which is helpful in development/testing installs
+
+* Omitting `kimball.sentry_dsn` will disable Sentry error logging. We recommend continuing to use Sentry so we can more easily assist resolving errors, but it may also send sensitive data to Sentry.
+
+### Advanced configuration
+
+More advanced configuration is available through the `kimball.app_config` option. The [Erlang Config format](http://erlang.org/doc/man/config.html) is used. Options through this configuration format are typically more complex than single flags would allow.
+
+Example Helm option:
+
+```
+--set-file kimball.app_config=kimball.config
+```
+
+With a no-op config file having the form:
+
+```
+[{features, []
+}].
+```
 
 ## Helpful commands
 
