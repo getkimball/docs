@@ -13,7 +13,24 @@ Prerequisites:
 * Your own Docker image repository for private storage of these images
 * One or more Kubernetes clusters in which to install the applications
 * [Helm](https://helm.sh/)
-* An S3 Bucket writable from an AWS-instance metadata credential set
+* An S3 Bucket writable from an AWS-instance metadata credential set (or other application storage credentials)
+
+## Storage options
+
+Feature flag data will be stored in Kubernetes ConfigMaps but analytics data will require external storage.
+
+Options:
+
+* S3
+* Google Cloud Storage
+
+### Google Cloud Storage
+
+GCS storage requires a Service Account with read/write access to a GCS bucket
+
+* Create a Kubernetes Secret in the namespace of the deployment, with the SA credentials for the value of the key `service_account.json`
+* Pass in the secret name to Helm with `--set kimball.secret.name=$SECRET_NAME`
+* Set the name of the bucket with `--set kimball.gcs_bucket=$GCS_BUCKET_NAME`
 
 ## Installation Process
 
@@ -93,6 +110,26 @@ With a no-op config file having the form:
 ```
 [{features, []
 }].
+```
+
+#### Prometheus Remote Write
+
+For more details about metrics see [monitoring](/monitoring.md)
+
+Prometheus metrics are exposed via the `/metrics` path of the application. Metrics can also be forwarded by the application to a remote Prometheus/Cortex. This may be useful if you are deploying this application in a remote location where you are unable to run Prometheus, but still want metrics.
+
+This is provided by [Cortex Remote Write](https://github.com/getkimball/cortex_remote_write)
+
+```
+[{cortex_remote_write, [
+    {interval, 15000},
+    {url, "URL"},
+    {username, "USERNAME"},
+    {password, "PASSWORD"},
+    {default_labels, [
+      {"label_name", "label_value"}
+    ]}
+]}].
 ```
 
 ## Helpful commands
