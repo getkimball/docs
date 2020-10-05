@@ -151,6 +151,7 @@ The configuration takes the form of
         init => [
             #{pattern => PATTERN,
               type => TYPE,
+              date_cohort => DATE_COHORT_TYPE,
               size => SIZE,
               error_probability => ERROR_PROBABILITY}
         ]
@@ -161,9 +162,11 @@ The configuration takes the form of
 The list `init` contains maps with the keys/options (all options are required):
 
 * `pattern` - A regular expression matching the name of an event/counter. The items in `init` are evaluated sequentially and the first matching pattern will be the arguments for the counter
+
 * `type` - The general type of counter to be used. Currently supported:
     * `bloom_scalable` - A scalable
     * `bloom_fixed_size` - A fixed size bloom filter, best used when the number of users is limited and a known number. Typically used when tens or hundreds of users are tracked and memory is a concern
+* `date_cohort` - `weekly` or omitted. This will generate a counter automatically based on the current week number. This can be used to track events that occur multiple times for a user (visible if in different weeks) or events over time.
 * `size` - The fixed or initial size for the bloom filter in number distinct users.
 * ` error_probability` - A desired error probability that 2 users may not be distinguishable. This probability is used in conjunction with `size` and certain combinations may be invalid. This is typically expressed as `0.1`, `0.01`, `0.001` and so on.
 
