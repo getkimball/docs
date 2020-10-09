@@ -109,6 +109,13 @@ Analytic data can be retrieved via GET `/v0/analytics` which will return a list 
     * `count` - The number of unique user IDs with this event
 
 
+#### Prometheus
+
+Prometheus metrics are exported at `/metrics/counters`.
+
+* `kimball_counter` - The count of unique users for an event
+* `kimball_counter_weekly` - The count of unique users in a week for an event. Exists for events where `date_cohort` is enabled
+
 ### Example
 
 
