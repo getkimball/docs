@@ -7,6 +7,22 @@ of CPU/memory, without risking details about individual users.
 
 *POST requests must have the content-type of `application/json`*
 
+## What can you track
+
+Analytic events tracked within the application are designed to avoid storing personal information and instead track counts of specific events while still being able to track user uniqueness.
+
+### Events
+
+Analytic events are a name combined with a count of the number of unique users and are the basis for all analytics data.
+
+### Goals
+
+Goals are events that also count which events a user has completed before this goal.
+
+### Value
+
+An event can be submitted with a number "value" that will be tracked. This is exposed as a sum (and with the counter of the event to get an average).
+
 ## Definitions
 
 ID/User ID - The "high cardinality" ID to track for an event.
@@ -95,6 +111,12 @@ Example event:
 }
 ```
 
+### Including event value when submitting an event
+
+Events can be submitted with a `value` field that will be tracked as a total value for an event. The value will only be added to the total if the user is completing this event for the first time. Subsequent event occurrences by a single user will not affect stored values even if the first event did not have a value.
+
+These totalled values will be exposed as a `value.sum` when retrieving analytic events. An average can be computed client side when combined with the count of an event.
+
 ### Retrieving Analytic Data
 
 Analytic data can be retrieved via GET `/v0/analytics` which will return a list of analytic events seen, and details about each event.
@@ -107,6 +129,8 @@ Analytic data can be retrieved via GET `/v0/analytics` which will return a list 
 * `single_event_counts` - Data will only be included if this is a goal event. A list JSON objects with properties:
     * `event` - The name of the event a user has completed
     * `count` - The number of unique user IDs with this event
+* `value` - Aggregate data about the `value` submitted with events
+    * `sum` - The summation of `value`s submitted, counted only on the first event of each user. Subsequent occurrences of the event for the user will not be included.
 
 
 #### Prometheus
