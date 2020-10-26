@@ -3,6 +3,8 @@
 Analytics with the Kimball application are designed to use a predictable amount
 of CPU/memory, without risking details about individual users.
 
+This data is used to compute [predictions](/predictions.md).
+
 *note: See your local installation `/api-docs/index.html` for your particular API specification as it may differ from what is documented here.*
 
 *POST requests must have the content-type of `application/json`*
