@@ -36,3 +36,9 @@ This response displays the information:
 
 * There is a 50% probability that users who complete `Example Event A` will complete `Example Goal Event`
 * There is a 25% probability that users who complete `Example Event B` will complete `Example Goal Event`
+
+#### Prometheus
+
+Prometheus metrics are exported at `/metrics/predictions`.
+
+* `kimball_bayes_prediction` - The prediction that users completing the (label) event will complete (label) goal. Range 0-1.
