@@ -129,7 +129,7 @@ Analytic data can be retrieved via GET `/v0/analytics` which will return a list 
     * `events` - A list of events a user completed before triggering this goal
     * `count` - The number of unique user IDs with this combination of events
 * `single_event_counts` - Data will only be included if this is a goal event. A list JSON objects with properties:
-    * `event` - The name of the event a user has completed
+    * `name` - The name of the event a user has completed
     * `count` - The number of unique user IDs with this event
 * `value` - Aggregate data about the `value` submitted with events
     * `sum` - The summation of `value`s submitted, counted only on the first event of each user. Subsequent occurrences of the event for the user will not be included.
