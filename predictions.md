@@ -37,6 +37,24 @@ This response displays the information:
 * There is a 50% probability that users who complete `Example Event A` will complete `Example Goal Event`
 * There is a 25% probability that users who complete `Example Event B` will complete `Example Goal Event`
 
+
+## Multi Event Predictions
+
+The predictions endpoint accepts `?event=...` query string arguments (multiple instances can be provided as separate `event` arguments) to give predictions for goals based on users with those events.
+
+This is computed via a [Naive Bayes algorithm](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
+
+```
+{
+  "goals": {
+    "Example Goal Event":{
+      "no":0.0004,
+      "yes":0.0205
+    }
+  }
+}
+```
+
 #### Prometheus
 
 Prometheus metrics are exported at `/metrics/predictions`.
