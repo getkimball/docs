@@ -25,6 +25,12 @@ Goals are events that also count which events a user has completed before this g
 
 An event can be submitted with a number "value" that will be tracked. This is exposed as a sum (and with the counter of the event to get an average).
 
+## Namespaces
+
+Namespaces provide logical separation for events, goals, and predictions. A default namespace of `default` is used unless another namespace is provided.
+
+Incoming events can include a `namespace` parameter in the event body and requests for data can include a `?namespace=...` query argument.
+
 ## Definitions
 
 ID/User ID - The "high cardinality" ID to track for an event.
@@ -134,6 +140,16 @@ Analytic data can be retrieved via GET `/v0/analytics` which will return a list 
 * `value` - Aggregate data about the `value` submitted with events
     * `sum` - The summation of `value`s submitted, counted only on the first event of each user. Subsequent occurrences of the event for the user will not be included.
 
+### Event Namespaces
+
+The namespaces known to the system can be retrieved with a GET request to `/v0/namespaces`
+
+```
+{"namespaces":[
+    "default",
+    "example"
+]}
+```
 
 #### Prometheus
 
@@ -143,7 +159,6 @@ Prometheus metrics are exported at `/metrics/counters`.
 * `kimball_counter_weekly` - The count of unique users in a week for an event. Exists for events where `date_cohort` is enabled
 
 ### Example
-
 
 A online store tracking feature usage of their store leading up to the first sale by a user might have the events
 
@@ -162,7 +177,6 @@ When a purchase is completed the events a user has completed will be stored with
 * [ `Sign up`, `Login`, `Searched for a product`] - X occurrences
 * [ `Sign up`, `Login`, `Browsed for a product` ] - Y occurrences
 * [ `Direct link to a product` ] - Z occurrences
-
 
 ## Advanced Configuration
 
