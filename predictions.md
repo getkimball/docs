@@ -55,6 +55,26 @@ This is computed via a [Naive Bayes algorithm](https://en.wikipedia.org/wiki/Nai
 }
 ```
 
+## User Based Predictions
+
+The predictions endpoint accepts `?user_id=...` query string argument to give predictions for goals based on the events known for that user.
+
+* `user_id` and `event` parameters cannot be combined in a request (HTTP 400 response).
+* A user without events will not generate predictions (HTTP 404 response).
+
+This is computed via a [Naive Bayes algorithm](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
+
+```
+{
+  "goals": {
+    "Example Goal Event":{
+      "no":0.0004,
+      "yes":0.0205
+    }
+  }
+}
+```
+
 #### Prometheus
 
 Prometheus metrics are exported at `/metrics/predictions`.
